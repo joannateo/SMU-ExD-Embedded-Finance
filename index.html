@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Finance Stack Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --midnight: #0f172a;
+            --slate: #334155;
+            --amber: #f59e0b;
+            --amber-light: #fef3c7;
+            --emerald: #10b981;
+            --blue: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f9fafb 0%, #e8eaed 100%);
+            color: var(--midnight);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            color: var(--midnight);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--slate);
+            margin-bottom: 20px;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--gray-200);
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .social-links {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .linkedin-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #0077b5;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .linkedin-btn:hover {
+            background: #005885;
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: var(--gray-200);
+            z-index: 0;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 8px;
+        }
+
+        .progress-step.active .progress-number {
+            background: var(--amber);
+            color: white;
+        }
+
+        .progress-step.completed .progress-number {
+            background: var(--emerald);
+            color: white;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            color: var(--midnight);
+            margin-bottom: 10px;
+        }
+
+        .step-desc {
+            color: var(--slate);
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+
+        .question-group {
+            margin-bottom: 35px;
+        }
+
+        .question-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--midnight);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .option-card {
+            padding: 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option-card:hover {
+            border-color: var(--amber);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+
+        .option-card.selected {
+            border-color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        .option-card.multi-select.selected {
+            border-color: var(--emerald);
+            background: #d1fae5;
+        }
+
+        .option-title {
+            font-weight: 600;
+            color: var(--midnight);
+            margin-bottom: 5px;
+        }
+
+        .option-desc {
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+
+        .slider-container {
+            padding: 20px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--gray-200);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--amber);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--amber);
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--amber);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--amber);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--midnight);
+            border: 2px solid var(--midnight);
+        }
+
+        .btn-secondary:hover {
+            background: var(--midnight);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--blue);
+            border: 2px solid var(--blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--blue);
+            color: white;
+        }
+
+        .ecosystem-map {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 2px solid var(--blue);
+        }
+
+        .ecosystem-layer {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--blue);
+        }
+
+        .layer-title {
+            font-weight: 600;
+            color: var(--midnight);
+            margin-bottom: 8px;
+        }
+
+        .layer-examples {
+            font-size: 0.9rem;
+            color: var(--slate);
+        }
+
+        .stack-recommendation {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 3px solid var(--emerald);
+        }
+
+        .stack-section {
+            margin-bottom: 30px;
+        }
+
+        .stack-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .stack-icon {
+            font-size: 1.8rem;
+        }
+
+        .stack-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.4rem;
+            color: var(--midnight);
+        }
+
+        .provider-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .provider-card {
+            background: var(--gray-50);
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--amber);
+        }
+
+        .provider-name {
+            font-weight: 600;
+            color: var(--midnight);
+            margin-bottom: 5px;
+        }
+
+        .provider-features {
+            font-size: 0.9rem;
+            color: var(--slate);
+            margin: 8px 0;
+        }
+
+        .provider-timeline {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--amber-light);
+            color: #92400e;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .provider-note {
+            background: #dbeafe;
+            border-left: 3px solid var(--blue);
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #1e40af;
+        }
+
+        .checklist {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+        }
+
+        .checklist h3 {
+            font-family: 'Fraunces', serif;
+            color: var(--midnight);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .checklist-category {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checklist-category h4 {
+            color: var(--midnight);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .checklist-items {
+            list-style: none;
+        }
+
+        .checklist-items li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--slate);
+        }
+
+        .checklist-items li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--emerald);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            margin-bottom: 12px;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--midnight);
+        }
+
+        .summary-value {
+            color: var(--slate);
+        }
+
+        .contact-form {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border: 2px solid var(--amber);
+        }
+
+        .contact-form.visible {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--midnight);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--amber);
+        }
+
+        .success-message {
+            display: none;
+            background: #d1fae5;
+            border: 2px solid var(--emerald);
+            padding: 20px;
+            border-radius: 10px;
+            color: var(--emerald);
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .feedback-form {
+            background: var(--gray-50);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .feedback-btn {
+            padding: 15px 30px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+        }
+
+        .feedback-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .feedback-btn.selected {
+            border-color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        .feedback-text {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .feedback-text.visible {
+            display: block;
+        }
+
+        .curriculum-note {
+            background: #f0f9ff;
+            border-left: 4px solid var(--blue);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .curriculum-note strong {
+            color: var(--blue);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Embedded Finance Stack Builder</h1>
+            <p class="subtitle">Interactive planning tool for SMU Executive Development - Digital Finance Module</p>
+            <div class="copyright">© 2026 Attribute Data Pte Ltd | Attribute Research<br>For use in SMU Executive Development Programme 2026</div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">
+                <div class="progress-number">1</div>
+                <div class="progress-label">Overview</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="progress-number">2</div>
+                <div class="progress-label">Planning</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="progress-number">3</div>
+                <div class="progress-label">Your Stack</div>
+            </div>
+            <div class="progress-step" data-step="4">
+                <div class="progress-number">4</div>
+                <div class="progress-label">Checklist</div>
+            </div>
+            <div class="progress-step" data-step="5">
+                <div class="progress-number">5</div>
+                <div class="progress-label">Next Steps</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Ecosystem Overview -->
+        <div class="step-content active" id="step1">
+            <div class="card">
+                <h2>Embedded Finance Ecosystem</h2>
+                <p class="step-desc">Understand the 4-layer architecture before planning your service</p>
+
+                <div class="ecosystem-map">
+                    <div class="ecosystem-layer">
+                        <div class="layer-title">Layer 4: User Interfaces (Your Platform)</div>
+                        <div class="layer-examples">Customer-facing experience: Grab, Shopee, Changi Airport, CapitaLand retail</div>
+                    </div>
+                    <div class="ecosystem-layer">
+                        <div class="layer-title">Layer 3: Payment Services / Enablers</div>
+                        <div class="layer-examples">Integration providers: Atome, Bolttech, CredoLab, Sumsub, payment aggregators</div>
+                    </div>
+                    <div class="ecosystem-layer">
+                        <div class="layer-title">Layer 2: Payment Networks / Products</div>
+                        <div class="layer-examples">Networks & schemes: Visa, Mastercard, PayNow, SGQR, NETS, BNPL providers</div>
+                    </div>
+                    <div class="ecosystem-layer">
+                        <div class="layer-title">Layer 1: Settlement Infrastructure</div>
+                        <div class="layer-examples">Core banking: DBS, UOB, OCBC, FAST, MAS settlement systems</div>
+                    </div>
+                </div>
+
+                <div class="curriculum-note">
+                    <strong>📚 Learning Focus:</strong> Map the complete provider ecosystem and make informed build vs. partner decisions for your embedded finance strategy.
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToStep(2)">Start Planning →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: BMC Planning Questions -->
+        <div class="step-content" id="step2">
+            <div class="card">
+                <h2>Business Model Planning</h2>
+                <p class="step-desc">5 key questions to define your embedded finance service</p>
+
+                <div class="question-group">
+                    <label class="question-label">1. TARGET CUSTOMERS - Who receives this service?</label>
+                    <div class="options-grid" id="customersOptions">
+                        <div class="option-card multi-select" data-value="b2c">
+                            <div class="option-title">B2C Consumers</div>
+                            <div class="option-desc">E-commerce shoppers, mobile app users</div>
+                        </div>
+                        <div class="option-card multi-select" data-value="b2b_sme">
+                            <div class="option-title">B2B SMEs</div>
+                            <div class="option-desc">Your platform's business customers</div>
+                        </div>
+                        <div class="option-card multi-select" data-value="enterprise">
+                            <div class="option-title">Enterprise</div>
+                            <div class="option-desc">Large corporate clients</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label">2. CORE VALUE PROP - What embedded service will you offer?</label>
+                    <div class="options-grid" id="valuePropOptions">
+                        <div class="option-card" data-value="payments">
+                            <div class="option-title">Embedded Payments</div>
+                            <div class="option-desc">Wallets, QR codes, seamless checkout</div>
+                        </div>
+                        <div class="option-card" data-value="bnpl">
+                            <div class="option-title">BNPL</div>
+                            <div class="option-desc">Consumer installment payments</div>
+                        </div>
+                        <div class="option-card" data-value="lending">
+                            <div class="option-title">SME Lending</div>
+                            <div class="option-desc">Working capital, invoice financing</div>
+                        </div>
+                        <div class="option-card" data-value="insurance">
+                            <div class="option-title">Embedded Insurance</div>
+                            <div class="option-desc">Travel, ride-hailing, purchase protection</div>
+                        </div>
+                        <div class="option-card" data-value="wealth">
+                            <div class="option-title">Embedded Wealth</div>
+                            <div class="option-desc">Robo-advisory, fractional investing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label">3. CHANNELS - Where does this service live?</label>
+                    <div class="options-grid" id="channelsOptions">
+                        <div class="option-card multi-select" data-value="website">
+                            <div class="option-title">Website</div>
+                            <div class="option-desc">Checkout, lead forms, customer portal</div>
+                        </div>
+                        <div class="option-card multi-select" data-value="mobile_app">
+                            <div class="option-title">Mobile App</div>
+                            <div class="option-desc">Native iOS/Android app</div>
+                        </div>
+                        <div class="option-card multi-select" data-value="physical">
+                            <div class="option-title">Physical Location</div>
+                            <div class="option-desc">Retail POS, kiosk, in-store</div>
+                        </div>
+                        <div class="option-card multi-select" data-value="api">
+                            <div class="option-title">API for Partners</div>
+                            <div class="option-desc">B2B API integration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label">4. TIMELINE - Launch goal?</label>
+                    <div class="slider-container">
+                        <input type="range" min="4" max="18" value="8" step="2" class="slider" id="timelineSlider">
+                        <div class="slider-labels">
+                            <span>4 weeks</span>
+                            <span>12 weeks</span>
+                            <span>18 months</span>
+                        </div>
+                        <div class="slider-value" id="timelineValue">8 weeks (white-label partner)</div>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label class="question-label">5. RISK TOLERANCE - Regulatory comfort level?</label>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="3" value="2" step="1" class="slider" id="riskSlider">
+                        <div class="slider-labels">
+                            <span>Conservative</span>
+                            <span>Balanced</span>
+                            <span>Aggressive</span>
+                        </div>
+                        <div class="slider-value" id="riskValue">Balanced</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+                    <button class="btn btn-primary" onclick="generateStack()">Generate My Stack →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Stack Recommendation -->
+        <div class="step-content" id="step3">
+            <div class="card">
+                <h2>Your Embedded Finance Stack</h2>
+                
+                <div class="summary-box" id="bmcSummary">
+                    <!-- Summary will be generated here -->
+                </div>
+
+                <div id="stackRecommendations">
+                    <!-- Stack recommendations will be generated here -->
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-outline" onclick="window.open('singapore-ecosystem-mapper.html', '_blank')">🔍 Explore More Providers</button>
+                    <button class="btn btn-secondary" onclick="goToStep(2)">← Revise Plan</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">View Checklist →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Partnering Checklist -->
+        <div class="step-content" id="step4">
+            <div class="card">
+                <h2>Partner Evaluation Checklist</h2>
+                <p class="step-desc">Critical questions before signing contracts</p>
+
+                <div class="checklist">
+                    <h3>✅ WHAT TO ASK BEFORE SIGNING</h3>
+
+                    <div class="checklist-category">
+                        <h4>🔧 TECHNICAL</h4>
+                        <ul class="checklist-items">
+                            <li>API uptime SLA documented (>99.9%)?</li>
+                            <li>Sandbox environment for testing?</li>
+                            <li>Your tech stack supported?</li>
+                            <li>Scalability limits defined?</li>
+                            <li>Integration timeline realistic?</li>
+                            <li>Documentation quality verified?</li>
+                            <li>Load testing and performance benchmarks?</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h4>🔒 SECURITY & COMPLIANCE</h4>
+                        <ul class="checklist-items">
+                            <li>Penetration testing completed? (Request latest report)</li>
+                            <li>Security certifications? (ISO 27001, SOC 2, PCI-DSS)</li>
+                            <li>Vulnerability management process documented?</li>
+                            <li>Data encryption at rest and in transit?</li>
+                            <li>Access control and authentication protocols?</li>
+                            <li>Incident response plan and SLAs?</li>
+                            <li>Third-party security audits conducted?</li>
+                            <li>Bug bounty program active?</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h4>💰 COMMERCIAL</h4>
+                        <ul class="checklist-items">
+                            <li>Revenue share vs flat fee model clear?</li>
+                            <li>Minimum volume commitment?</li>
+                            <li>Pricing tiers documented?</li>
+                            <li>Contract length and exit clauses?</li>
+                            <li>Performance penalties specified?</li>
+                            <li>Hidden fees disclosed?</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h4>⚖️ REGULATORY (MAS)</h4>
+                        <ul class="checklist-items">
+                            <li>MAS licensed? (Request license number)</li>
+                            <li>Your liability coverage defined?</li>
+                            <li>Data residency in Singapore?</li>
+                            <li>Audit rights in contract?</li>
+                            <li>Compliance reporting automated?</li>
+                            <li>AML/KYC procedures documented?</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist-category">
+                        <h4>🛠️ OPERATIONAL</h4>
+                        <ul class="checklist-items">
+                            <li>Dedicated support team assigned?</li>
+                            <li>Onboarding timeline with penalties?</li>
+                            <li>Case studies from similar companies?</li>
+                            <li>SLAs for issue resolution?</li>
+                            <li>Disaster recovery plan documented?</li>
+                            <li>Migration support if switching?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">← Back to Stack</button>
+                    <button class="btn btn-primary" onclick="goToStep(5)">Next Steps →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Next Steps -->
+        <div class="step-content" id="step5">
+            <div class="card">
+                <h2>Implementation Roadmap</h2>
+                <p class="step-desc">Your next steps toward launching embedded finance</p>
+
+                <div style="background: var(--gray-50); padding: 30px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: var(--midnight); margin-bottom: 20px;">📋 Immediate Actions (Week 1-2)</h3>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <strong>1. Share with Your Team</strong><br>
+                        Present this stack to your CTO, product team, and compliance officer. Use the checklist for partner evaluation discussions.
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong>2. Test Provider Sandboxes</strong><br>
+                        Request sandbox access from 2-3 shortlisted providers. Test basic integrations to validate technical feasibility.
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong>3. Map Customer Journey</strong><br>
+                        Identify exactly where in your customer experience the embedded service adds value. Design the integration points.
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong>4. Run Financial Modeling</strong><br>
+                        Calculate: Expected revenue, Customer LTV increase, Implementation costs, Break-even timeline
+                    </div>
+                </div>
+
+                <div style="background: var(--amber-light); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="color: var(--midnight); margin-bottom: 15px;">📝 Assignment Connection</h3>
+                    <p style="color: var(--slate); margin-bottom: 15px;">This stack builder directly supports your <strong>Strategic Embedded Finance Proposal</strong>:</p>
+                    <ul style="margin-left: 25px; color: var(--slate);">
+                        <li><strong>Opportunity Assessment:</strong> Your customer selection and value prop</li>
+                        <li><strong>Product Design:</strong> Your provider stack and integration approach</li>
+                        <li><strong>Implementation Roadmap:</strong> Timeline and phased rollout</li>
+                        <li><strong>Risk Management:</strong> Partner evaluation checklist</li>
+                        <li><strong>Success Metrics:</strong> KPIs from provider recommendations</li>
+                    </ul>
+                </div>
+
+                <div class="button-group" style="justify-content: center;">
+                    <button class="btn btn-primary" onclick="downloadGuide()">📥 Download This Guide</button>
+                    <button class="btn btn-secondary" onclick="showContactForm()">💬 Continue the Conversation</button>
+                </div>
+
+                <div class="feedback-form">
+                    <h3 style="color: var(--midnight); margin-bottom: 15px; text-align: center;">How was this tool?</h3>
+                    <div class="feedback-buttons">
+                        <button class="feedback-btn" onclick="selectFeedback('up')">👍</button>
+                        <button class="feedback-btn" onclick="selectFeedback('down')">👎</button>
+                    </div>
+                    <div class="feedback-text" id="feedbackText">
+                        <div class="form-group">
+                            <label>How can we make it better?</label>
+                            <textarea id="feedbackSuggestion" rows="3" placeholder="Share your suggestions..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+                    </div>
+                    <div class="success-message" id="feedbackSuccess">
+                        ✅ Thank you for your feedback!
+                    </div>
+                </div>
+
+                <div class="contact-form" id="contactForm">
+                    <h3 style="color: var(--midnight); margin-bottom: 15px;">Let's Discuss Your Implementation</h3>
+                    <p style="color: var(--slate); margin-bottom: 25px;">Share your details and we'll reach out to explore how Attribute Data can support your embedded finance strategy.</p>
+
+                    <form id="consultationForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Organisation</label>
+                                <input type="text" id="organisation" placeholder="Your company name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Your Role</label>
+                                <input type="text" id="role" placeholder="e.g., Head of Digital" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" placeholder="your.email@company.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile</label>
+                                <input type="tel" id="mobile" placeholder="+65" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>What would you like to discuss?</label>
+                            <textarea id="message" rows="4" placeholder="e.g., Looking to embed BNPL in our e-commerce platform..." required></textarea>
+                        </div>
+
+                        <div class="button-group" style="justify-content: center;">
+                            <button type="submit" class="btn btn-primary">Send Inquiry →</button>
+                        </div>
+                    </form>
+
+                    <div class="success-message" id="successMessage">
+                        ✅ Thank you! We'll be in touch shortly.
+                    </div>
+                </div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">← Start Over</button>
+                </div>
+
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--gray-200); text-align: center;">
+                    <h3 style="color: var(--midnight); margin-bottom: 20px;">Share Your Achievement</h3>
+                    <div class="social-links" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button class="linkedin-btn" onclick="shareOnLinkedIn()">
+                            <span>📤</span>
+                            Share on LinkedIn
+                        </button>
+                        <a href="https://sg.linkedin.com/company/attributedata" target="_blank" class="linkedin-btn" style="text-decoration: none;">
+                            <span>📘</span>
+                            Follow Attribute Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - UPDATE THIS URL
+        // ========================================
+        // Replace with your Google Apps Script Web App URL after deployment
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        // Instructions: See google-apps-script.js file for deployment steps
+        // ========================================
+
+        // State management
+        const state = {
+            customers: [],
+            valueProp: null,
+            channels: [],
+            timeline: 8,
+            risk: 2
+        };
+
+        // Generate unique session ID
+        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+        let feedbackType = null;
+
+        // Provider database with service-specific logic INCLUDING BANKING SOLUTIONS
+        const providers = {
+            payments: {
+                description: "Digital wallets, QR codes, seamless checkout at your platform",
+                layers: [
+                    {
+                        icon: "🎨",
+                        name: "UI/UX Design & Development",
+                        items: [
+                            { name: "Stripe Checkout", features: "Pre-built payment UI, mobile-optimized", timeline: "1 week" },
+                            { name: "Custom Design Agency", features: "Full UX design, prototyping, user testing", timeline: "6-8 weeks" },
+                            { name: "Branded Mobile App", features: "Flutter/React Native development", timeline: "8-12 weeks" },
+                            { name: "Web Development Firms", features: "Payment page design, checkout optimization", timeline: "4-6 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Identity, Compliance & Security",
+                        items: [
+                            { name: "Sumsub", features: "eKYC, document verification, AML", timeline: "1 week" },
+                            { name: "Jumio", features: "Biometric authentication, fraud detection", timeline: "1 week" },
+                            { name: "Security Testing (Penetration)", features: "Regular pen testing, vulnerability assessment", timeline: "2-3 weeks initial, quarterly thereafter" },
+                            { name: "Compliance Consultants", features: "MAS PS Act compliance, audit preparation", timeline: "Ongoing" }
+                        ]
+                    },
+                    {
+                        icon: "💳",
+                        name: "Payment Processing & Networks",
+                        items: [
+                            { name: "Stripe", features: "Cards, wallets, PayNow, 3DS", timeline: "1 week" },
+                            { name: "2C2P", features: "Asia payment methods, QR codes", timeline: "2 weeks" },
+                            { name: "PayNow (Bank)", features: "Real-time P2P via DBS/UOB/OCBC", timeline: "2-3 weeks" },
+                            { name: "SGQR (NETS)", features: "Unified QR code standard", timeline: "2 weeks" },
+                            { name: "DBS PayLah!", features: "Bank wallet integration", timeline: "3-4 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "💸",
+                        name: "Banking-as-a-Service & Settlement",
+                        items: [
+                            { name: "DBS Bank APIs", features: "Virtual accounts, real-time settlement", timeline: "3-4 weeks" },
+                            { name: "UOB APIs", features: "Corporate banking, bulk payouts", timeline: "3-4 weeks" },
+                            { name: "OCBC APIs", features: "Business banking integration", timeline: "3-4 weeks" },
+                            { name: "HolyWally BaaS", features: "Full banking infrastructure, card issuance", timeline: "4-6 weeks" },
+                            { name: "Aspire BaaS", features: "Multi-currency accounts, expense management", timeline: "3-4 weeks" },
+                            { name: "Liquid Group", features: "E-wallet infrastructure, prepaid cards", timeline: "4-6 weeks" }
+                        ]
+                    }
+                ]
+            },
+            bnpl: {
+                description: "Consumer installment payments at checkout",
+                layers: [
+                    {
+                        icon: "🎨",
+                        name: "UI/UX Layer",
+                        items: [
+                            { name: "Atome White-label Widget", features: "Branded BNPL at checkout, mobile SDK", timeline: "2 weeks" },
+                            { name: "Pace Integration", features: "Enterprise BNPL, custom terms", timeline: "3 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Credit Scoring & Risk",
+                        items: [
+                            { name: "CredoLab", features: "Alternative credit scoring, digital footprint", timeline: "2 weeks" },
+                            { name: "Provider's Built-in Scoring", features: "Atome/Pace have their own underwriting", timeline: "Included" }
+                        ]
+                    },
+                    {
+                        icon: "💳",
+                        name: "BNPL Engine (All-in-One)",
+                        items: [
+                            { name: "Atome", features: "3-month installments, instant approval, collections, settlement INCLUDED", timeline: "2-3 weeks", note: "✓ Settlement handled by Atome - you don't need separate banking layer" },
+                            { name: "Pace", features: "B2B focus, flexible terms, settlement INCLUDED", timeline: "3 weeks", note: "✓ Settlement handled by Pace - end-to-end solution" }
+                        ]
+                    }
+                ],
+                note: "⚡ BNPL providers like Atome and Pace are END-TO-END solutions. They handle credit decisioning, loan servicing, collections, AND settlement. You don't need a separate banking/settlement layer."
+            },
+            lending: {
+                description: "SME working capital, invoice financing, trade finance",
+                layers: [
+                    {
+                        icon: "🎨",
+                        name: "UI/UX Layer",
+                        items: [
+                            { name: "Custom Loan Application", features: "Calculator, application form, approval dashboard", timeline: "4-6 weeks" },
+                            { name: "Funding Societies White-label", features: "Pre-built loan marketplace UI", timeline: "3-4 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Credit Assessment",
+                        items: [
+                            { name: "CredoLab", features: "SME alternative data scoring", timeline: "2 weeks" },
+                            { name: "Sumsub", features: "Business KYC, UBO verification", timeline: "1 week" },
+                            { name: "Funding Societies Underwriting", features: "Marketplace lending models", timeline: "Included" }
+                        ]
+                    },
+                    {
+                        icon: "💰",
+                        name: "Lending Platform",
+                        items: [
+                            { name: "Funding Societies", features: "SME loans $10K-$500K, 3-12 months, alternative underwriting", timeline: "3-4 weeks" },
+                            { name: "Validus", features: "Invoice financing, revenue-based lending", timeline: "3-4 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "💸",
+                        name: "Capital & Settlement",
+                        items: [
+                            { name: "Institutional Funding", features: "P2P platform connects to their funding sources", timeline: "Varies" },
+                            { name: "Bank Partnership (DBS/UOB)", features: "Capital provider for lending pool", timeline: "8-12 weeks" }
+                        ]
+                    }
+                ]
+            },
+            insurance: {
+                description: "Travel, ride-hailing, purchase protection at point of sale",
+                layers: [
+                    {
+                        icon: "🎨",
+                        name: "UI/UX Layer",
+                        items: [
+                            { name: "Bolttech Widgets", features: "Embeddable insurance UI, quote comparison", timeline: "1-2 weeks" },
+                            { name: "Covergo UI Kit", features: "White-label insurance screens", timeline: "2 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Risk Assessment",
+                        items: [
+                            { name: "Provider's Underwriting", features: "Bolttech/Covergo handle risk assessment", timeline: "Included" },
+                            { name: "Parametric Rules", features: "Automatic claims (flight delay, weather)", timeline: "2 weeks setup" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Insurance-as-a-Service",
+                        items: [
+                            { name: "Bolttech", features: "100+ products, instant quotes, claims automation, carrier relationships INCLUDED", timeline: "1-2 weeks", note: "✓ Bolttech handles carrier partnerships and settlement" },
+                            { name: "Covergo", features: "On-demand insurance, multi-carrier, white-label, settlement INCLUDED", timeline: "2 weeks", note: "✓ Covergo manages carrier relationships end-to-end" }
+                        ]
+                    }
+                ],
+                note: "⚡ InsurTech platforms like Bolttech/Covergo are aggregators with pre-negotiated carrier relationships. You don't need to contract with insurance companies separately."
+            },
+            wealth: {
+                description: "Robo-advisory, fractional investing, savings products",
+                layers: [
+                    {
+                        icon: "🎨",
+                        name: "UI/UX Layer",
+                        items: [
+                            { name: "Bambu White-label", features: "Complete robo-advisory UI, onboarding", timeline: "3 weeks" },
+                            { name: "Custom Investment App", features: "Goal-based portfolios, performance dashboard", timeline: "6-8 weeks" }
+                        ]
+                    },
+                    {
+                        icon: "🛡️",
+                        name: "Compliance & KYC",
+                        items: [
+                            { name: "Sumsub", features: "Investor KYC, accreditation verification", timeline: "1 week" },
+                            { name: "Platform Provider KYC", features: "Endowus/Syfe have built-in compliance", timeline: "Included" }
+                        ]
+                    },
+                    {
+                        icon: "📈",
+                        name: "Investment Platform",
+                        items: [
+                            { name: "Endowus B2B", features: "Goals-based portfolios, CPF optimization, custody INCLUDED", timeline: "2-3 weeks", note: "✓ Endowus handles custody and fund administration" },
+                            { name: "Syfe Wealth", features: "Robo-advisory, thematic portfolios, custody INCLUDED", timeline: "2 weeks", note: "✓ Syfe manages custody and trading" },
+                            { name: "StashAway", features: "Risk-optimized portfolios, custody INCLUDED", timeline: "2-3 weeks" }
+                        ]
+                    }
+                ],
+                note: "⚡ Robo-advisory platforms handle custody, fund administration, and trading execution. You don't need separate custodian relationships."
+            }
+        };
+
+        // Initialize
+        function init() {
+            // Multi-select for customers
+            document.querySelectorAll('#customersOptions .option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    const value = this.dataset.value;
+                    const index = state.customers.indexOf(value);
+                    if (index > -1) {
+                        state.customers.splice(index, 1);
+                    } else {
+                        state.customers.push(value);
+                    }
+                });
+            });
+
+            // Single select for value prop
+            document.querySelectorAll('#valuePropOptions .option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('#valuePropOptions .option-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    state.valueProp = this.dataset.value;
+                });
+            });
+
+            // Multi-select for channels
+            document.querySelectorAll('#channelsOptions .option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    const value = this.dataset.value;
+                    const index = state.channels.indexOf(value);
+                    if (index > -1) {
+                        state.channels.splice(index, 1);
+                    } else {
+                        state.channels.push(value);
+                    }
+                });
+            });
+
+            // Timeline slider
+            document.getElementById('timelineSlider').addEventListener('input', function() {
+                state.timeline = parseInt(this.value);
+                updateTimelineLabel();
+            });
+
+            // Risk slider
+            document.getElementById('riskSlider').addEventListener('input', function() {
+                state.risk = parseInt(this.value);
+                updateRiskLabel();
+            });
+        }
+
+        function updateTimelineLabel() {
+            const labels = {
+                4: "4 weeks (fastest - white-label)",
+                6: "6 weeks (white-label partner)",
+                8: "8 weeks (API integration)",
+                10: "10 weeks (API + customization)",
+                12: "12 weeks (hybrid approach)",
+                14: "14 weeks (custom development)",
+                16: "16 weeks (complex custom)",
+                18: "18 months (assignment goal)"
+            };
+            document.getElementById('timelineValue').textContent = labels[state.timeline];
+        }
+
+        function updateRiskLabel() {
+            const labels = {
+                1: "Conservative (regulated partners only)",
+                2: "Balanced (established fintechs)",
+                3: "Aggressive (innovative startups)"
+            };
+            document.getElementById('riskValue').textContent = labels[state.risk];
+        }
+
+        function goToStep(step) {
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach(s => {
+                s.classList.remove('active');
+                const stepNum = parseInt(s.dataset.step);
+                if (stepNum < step) {
+                    s.classList.add('completed');
+                } else {
+                    s.classList.remove('completed');
+                }
+            });
+            document.querySelector(`.progress-step[data-step="${step}"]`).classList.add('active');
+
+            // Show content
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function generateStack() {
+            if (!state.valueProp || state.customers.length === 0 || state.channels.length === 0) {
+                alert('Please answer all required questions before generating your stack');
+                return;
+            }
+
+            // Generate BMC summary
+            const summaryDiv = document.getElementById('bmcSummary');
+            summaryDiv.innerHTML = `
+                <h3 style="color: var(--midnight); margin-bottom: 15px;">📊 Your Service Plan</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Target Customers:</span>
+                    <span class="summary-value">${formatCustomers()}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Embedded Service:</span>
+                    <span class="summary-value">${formatValueProp()}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Distribution Channels:</span>
+                    <span class="summary-value">${formatChannels()}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Timeline:</span>
+                    <span class="summary-value">${state.timeline} weeks</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Risk Approach:</span>
+                    <span class="summary-value">${formatRisk()}</span>
+                </div>
+            `;
+
+            // Generate stack recommendations
+            const serviceStack = providers[state.valueProp];
+            const stackDiv = document.getElementById('stackRecommendations');
+            
+            let stackHTML = '<div class="stack-recommendation">';
+            stackHTML += `<h3 style="font-family: Fraunces, serif; font-size: 1.8rem; margin-bottom: 10px;">🎯 Your ${formatValueProp()} Stack</h3>`;
+            stackHTML += `<p style="color: var(--slate); margin-bottom: 25px;">${serviceStack.description}</p>`;
+
+            // Add service-specific note if exists
+            if (serviceStack.note) {
+                stackHTML += `<div class="provider-note" style="background: #dbeafe; border-left: 3px solid #3b82f6; padding: 15px; margin-bottom: 25px; border-radius: 6px;">
+                    <strong>💡 Important:</strong> ${serviceStack.note}
+                </div>`;
+            }
+
+            // Generate layers
+            serviceStack.layers.forEach(layer => {
+                stackHTML += '<div class="stack-section">';
+                stackHTML += `
+                    <div class="stack-header">
+                        <span class="stack-icon">${layer.icon}</span>
+                        <h3 class="stack-title">${layer.name}</h3>
+                    </div>
+                `;
+
+                stackHTML += '<div class="provider-grid">';
+                layer.items.forEach(provider => {
+                    stackHTML += `
+                        <div class="provider-card">
+                            <div class="provider-name">${provider.name}</div>
+                            <div class="provider-features">${provider.features}</div>
+                            <span class="provider-timeline">⏱️ ${provider.timeline}</span>
+                            ${provider.note ? `<div class="provider-note">${provider.note}</div>` : ''}
+                        </div>
+                    `;
+                });
+                stackHTML += '</div></div>';
+            });
+
+            // Total timeline
+            stackHTML += `
+                <div style="background: var(--amber-light); padding: 20px; border-radius: 10px; margin-top: 25px; text-align: center;">
+                    <strong style="font-size: 1.2rem; color: var(--midnight);">ESTIMATED TIMELINE: ${state.timeline} weeks | Risk Level: ${formatRisk()}</strong>
+                </div>
+            `;
+
+            stackHTML += '</div>';
+            stackDiv.innerHTML = stackHTML;
+
+            // Log stack generation to Google Sheets
+            const stackData = {
+                type: 'stack',
+                serviceType: formatValueProp(),
+                customers: formatCustomers(),
+                channels: formatChannels(),
+                timeline: state.timeline,
+                risk: formatRisk(),
+                sessionId: sessionId,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+
+            if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(stackData)
+                }).catch(error => {
+                    console.log('Stack logged locally:', stackData);
+                });
+            }
+
+            goToStep(3);
+        }
+
+        function formatCustomers() {
+            const labels = {
+                b2c: 'B2C Consumers',
+                b2b_sme: 'B2B SMEs',
+                enterprise: 'Enterprise'
+            };
+            return state.customers.map(c => labels[c]).join(', ');
+        }
+
+        function formatValueProp() {
+            const labels = {
+                payments: 'Embedded Payments',
+                bnpl: 'BNPL',
+                lending: 'SME Lending',
+                insurance: 'Embedded Insurance',
+                wealth: 'Embedded Wealth'
+            };
+            return labels[state.valueProp];
+        }
+
+        function formatChannels() {
+            const labels = {
+                website: 'Website',
+                mobile_app: 'Mobile App',
+                physical: 'Physical Location',
+                api: 'API for Partners'
+            };
+            return state.channels.map(c => labels[c]).join(', ');
+        }
+
+        function formatRisk() {
+            const labels = {
+                1: 'Conservative',
+                2: 'Balanced',
+                3: 'Aggressive'
+            };
+            return labels[state.risk];
+        }
+
+        function downloadGuide() {
+            // Simple download trigger - in production would generate PDF
+            window.print();
+        }
+
+        function shareOnLinkedIn() {
+            const text = encodeURIComponent("I just attended the Embedded Finance Module with SMU ExD and check out what I have created! @SMU @JoannaTeo #ExecutiveDevelopment #EmbeddedFinance #DigitalTransformation");
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&summary=${text}`, '_blank', 'width=600,height=600');
+        }
+
+        function showContactForm() {
+            document.getElementById('contactForm').classList.add('visible');
+            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function selectFeedback(type) {
+            feedbackType = type;
+            document.querySelectorAll('.feedback-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.feedback-btn').classList.add('selected');
+            document.getElementById('feedbackText').classList.add('visible');
+        }
+
+        function submitFeedback() {
+            const suggestion = document.getElementById('feedbackSuggestion').value;
+            
+            // Send to Google Sheets
+            const feedbackData = {
+                type: 'feedback',
+                feedbackType: feedbackType,
+                suggestion: suggestion,
+                userAgent: navigator.userAgent,
+                sessionId: sessionId,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to backend
+            if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(feedbackData)
+                }).catch(error => {
+                    console.log('Feedback logged locally:', feedbackData);
+                });
+            }
+            
+            document.getElementById('feedbackSuccess').style.display = 'block';
+            document.getElementById('feedbackText').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('feedbackSuccess').style.display = 'none';
+            }, 3000);
+        }
+
+        // Form submission
+        document.getElementById('consultationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                organisation: document.getElementById('organisation').value,
+                role: document.getElementById('role').value,
+                email: document.getElementById('email').value,
+                mobile: document.getElementById('mobile').value,
+                message: document.getElementById('message').value,
+                serviceType: formatValueProp(),
+                customers: formatCustomers(),
+                channels: formatChannels(),
+                timeline: state.timeline,
+                risk: formatRisk()
+            };
+
+            // Generate stack details for email
+            const serviceStack = providers[state.valueProp];
+            let stackDetails = `SERVICE: ${formData.serviceType}\n\n`;
+            
+            serviceStack.layers.forEach(layer => {
+                stackDetails += `${layer.name}:\n`;
+                layer.items.forEach(provider => {
+                    stackDetails += `  - ${provider.name}: ${provider.features} (${provider.timeline})\n`;
+                });
+                stackDetails += '\n';
+            });
+
+            // Send to Google Sheets and trigger email
+            const consultationData = {
+                type: 'consultation',
+                ...formData,
+                stackDetails: stackDetails,
+                sessionId: sessionId,
+                timestamp: new Date().toISOString()
+            };
+
+            if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(consultationData)
+                }).then(() => {
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('consultationForm').reset();
+                }).catch(error => {
+                    console.log('Consultation logged locally:', consultationData);
+                    // Still show success to user
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('consultationForm').reset();
+                });
+            } else {
+                // Fallback: Open mailto if no backend configured
+                const subject = encodeURIComponent('Embedded Finance Implementation Inquiry - ' + formData.organisation);
+                const body = encodeURIComponent(`
+Organisation: ${formData.organisation}
+Role: ${formData.role}
+Email: ${formData.email}
+Mobile: ${formData.mobile}
+
+Service Plan:
+- Embedded Service: ${formData.serviceType}
+- Customers: ${formData.customers}
+- Timeline: ${formData.timeline} weeks
+
+Discussion:
+${formData.message}
+
+GENERATED STACK:
+${stackDetails}
+
+---
+Generated via SMU ExD Embedded Finance Stack Builder
+Attribute Data Pte Ltd | Attribute Research
+                `.trim());
+
+                window.open(`mailto:joannateo@attributedata.com?subject=${subject}&body=${body}`);
+                
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('consultationForm').reset();
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
